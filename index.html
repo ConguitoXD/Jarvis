@@ -1,0 +1,25 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{NAME}}</title><style>
+body{margin:0;background:#050b14;color:#cfefff;font:16px system-ui;display:flex;flex-direction:column;height:100vh}
+h1{text-align:center;letter-spacing:.4em;color:#4fd1ff;text-shadow:0 0 12px #4fd1ff;margin:16px 0 4px}
+#core{width:70px;height:70px;margin:6px auto;border-radius:50%;border:3px solid #4fd1ff;box-shadow:0 0 25px #4fd1ff,inset 0 0 25px #4fd1ff;transition:.3s}
+#core.on{animation:p 1s infinite}@keyframes p{50%{box-shadow:0 0 50px #4fd1ff,inset 0 0 40px #4fd1ff}}
+#log{flex:1;overflow:auto;padding:16px;max-width:800px;width:100%;margin:auto;box-sizing:border-box}
+.m{margin:8px 0;padding:10px 14px;border-radius:12px;white-space:pre-wrap;max-width:85%}
+.u{background:#123;margin-left:auto}.j{background:#0b2233;border:1px solid #1e5a78}
+form{display:flex;gap:8px;padding:12px;max-width:800px;width:100%;margin:auto;box-sizing:border-box}
+input{flex:1;padding:12px;border-radius:10px;border:1px solid #1e5a78;background:#0b1622;color:#fff;font-size:16px}
+button{padding:0 16px;border-radius:10px;border:0;background:#4fd1ff;color:#000;font-size:18px;cursor:pointer}
+</style></head><body><h1>{{NAME}}</h1><div id="core"></div><div id="log"></div>
+<form id="f"><input id="i" placeholder="Escribe o pulsa 🎤…" autocomplete="off"><button type="button" id="mic">🎤</button><button>➤</button></form>
+<script>
+const log=document.getElementById('log'),i=document.getElementById('i'),core=document.getElementById('core');let voice=false;
+const add=(t,c)=>{const d=document.createElement('div');d.className='m '+c;d.textContent=t;log.append(d);log.scrollTop=1e9};
+async function send(t){if(!t.trim())return;add(t,'u');i.value='';core.className='on';
+ const r=await(await fetch('/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg:t})})).json();
+ core.className='';add(r.reply,'j');if(voice){const u=new SpeechSynthesisUtterance(r.reply);u.lang=navigator.language;speechSynthesis.speak(u)}}
+document.getElementById('f').onsubmit=e=>{e.preventDefault();voice=false;send(i.value)};
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+document.getElementById('mic').onclick=()=>{if(!SR)return alert('Tu navegador no soporta voz (usa Chrome).');
+ const s=new SR();s.lang=navigator.language;s.onresult=e=>{voice=true;send(e.results[0][0].transcript)};s.start()};
+</script></body></html>

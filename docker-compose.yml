@@ -1,0 +1,8 @@
+services:
+  jarvis:
+    build: .
+    restart: always            # se reinicia solo: operativo 24/7
+    ports: ["8000:8000"]
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./data:/app/data       # su memoria sobrevive a reinicios
