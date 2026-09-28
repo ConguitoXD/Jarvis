@@ -2,16 +2,19 @@
 <meta name="theme-color" content="#02070d"><title>{{NAME}}</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
 <style>
-:root{--c:#00d8ff;--c2:#9ff4ff;--hot:#ffb000;--bg:#02070d;--panel:rgba(0,190,255,.05);--line:rgba(0,216,255,.28);--dim:#5f98ad;--h:'Orbitron',ui-monospace,monospace}
+:root{--c:#00d8ff;--c2:#9ff4ff;--hot:#ffb000;--bg:#02070d;--panel:rgba(0,190,255,.05);--line:rgba(0,216,255,.28);--dim:#5f98ad;--ok:#3dffa8;--h:'Orbitron',ui-monospace,monospace}
 *{box-sizing:border-box}html,body{height:100%;margin:0}
 body{background:radial-gradient(ellipse at 50% 20%,#06243a 0,var(--bg) 60%);color:#d6f7ff;font:500 16px 'Rajdhani',system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(rgba(0,216,255,.04) 1px,transparent 1px) 0 0/100% 32px,linear-gradient(90deg,rgba(0,216,255,.04) 1px,transparent 1px) 0 0/32px 100%}
 body::after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(transparent 0 2px,rgba(0,0,0,.18) 2px 3px)}
 header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);font-family:var(--h);letter-spacing:.18em;font-size:12px}
 header b{font-size:16px;color:var(--c);text-shadow:0 0 10px var(--c)}
-.on{color:#3dffa8}.on::before{content:"● ";animation:blink 2s infinite}
+.on{color:var(--ok)}.on::before{content:"● ";animation:blink 2s infinite}
 #clock{margin-left:auto;text-align:right;color:var(--c2)}#clock small{display:block;color:var(--dim);font-size:9px}
-#vt{background:none;border:1px solid var(--line);color:var(--dim);font:10px var(--h);letter-spacing:.15em;padding:6px 8px;cursor:pointer}#vt.a{color:var(--c);border-color:var(--c)}
+#vt,#hf{background:none;border:1px solid var(--line);color:var(--dim);font:700 10px var(--h);letter-spacing:.15em;padding:6px 8px;cursor:pointer}#vt.a{color:var(--c);border-color:var(--c)}
+#hf{margin-top:10px;padding:10px 14px;font-size:11px;color:var(--c);border-color:var(--c);background:rgba(0,216,255,.08)}#hf.a{color:var(--ok);border-color:var(--ok);background:rgba(61,255,168,.1);box-shadow:0 0 14px rgba(61,255,168,.35)}
+#heard{margin-top:6px;min-height:1.3em;max-width:340px;text-align:center;color:var(--c2);font-style:italic;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#heard.d{color:var(--dim);font-style:normal;font-size:13px}
+#cmds li{list-style:none;padding:5px 0;border-bottom:1px dashed var(--line);font-size:14px}#cmds ul{margin:0;padding:0}#cmds em{color:var(--c);font-style:normal}
 main{flex:1;min-height:0;display:grid;gap:14px;padding:14px 16px;grid-template:"left reactor right" auto "left chat right" 1fr/250px minmax(0,1fr) 270px;max-width:1400px;width:100%;margin:auto}
 main>*{min-width:0}.p{position:relative;border:1px solid var(--line);background:var(--panel);padding:12px}
 .p::before,.p::after{content:"";position:absolute;width:12px;height:12px;border:2px solid var(--c)}
@@ -20,7 +23,7 @@ h2{margin:0 0 8px;font:700 10px var(--h);letter-spacing:.25em;color:var(--dim)}
 #stats{grid-area:left;display:flex;flex-direction:column;gap:12px}
 .v{font:700 26px var(--h);color:var(--c);text-shadow:0 0 12px rgba(0,216,255,.6)}.s{color:var(--dim);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bar{height:3px;background:rgba(0,216,255,.12);margin-top:8px}.bar i{display:block;height:100%;background:var(--c);box-shadow:0 0 8px var(--c);transition:width 1s}
-#rx{grid-area:reactor;display:flex;flex-direction:column;align-items:center}
+#rx{grid-area:reactor;display:flex;flex-direction:column;align-items:center}#vx{display:flex;flex-direction:column;align-items:center;min-width:0}
 svg{width:190px;height:190px;overflow:visible;filter:drop-shadow(0 0 14px rgba(0,216,255,.55))}
 svg circle{fill:none;stroke:var(--c);transform-box:fill-box;transform-origin:center}
 .r1{stroke-width:1;stroke-dasharray:3 5;opacity:.6;animation:spin 40s linear infinite}
@@ -31,7 +34,8 @@ svg circle{fill:none;stroke:var(--c);transform-box:fill-box;transform-origin:cen
 #state{margin-top:6px;font:700 11px var(--h);letter-spacing:.35em;color:var(--c)}
 [data-s=think] svg circle{animation-duration:2s}[data-s=think] .core{animation-duration:.6s}
 [data-s=listen] svg circle{stroke:var(--hot)}[data-s=listen] #state{color:var(--hot)}[data-s=listen] svg{filter:drop-shadow(0 0 16px rgba(255,176,0,.7))}
-[data-s=speak] .core{animation-duration:.35s}
+[data-s=speak] .core{animation-duration:.35s}[data-s=speak] .r2{animation-duration:3s}
+[data-s=armed] #state{color:var(--ok)}[data-s=armed] .r5{stroke:var(--ok);stroke-width:3;animation:pulse 2s infinite}[data-s=armed] .r1{stroke:var(--ok);animation-duration:8s}
 #chat{grid-area:chat;display:flex;flex-direction:column;min-height:0;padding:0}
 #log{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
 .m{max-width:85%;white-space:pre-wrap;line-height:1.35;animation:in .3s}
@@ -39,7 +43,7 @@ svg circle{fill:none;stroke:var(--c);transform-box:fill-box;transform-origin:cen
 .j{border-left:2px solid var(--c);padding:4px 0 4px 10px}.u{align-self:flex-end;text-align:right;border-right:2px solid var(--hot);padding:4px 10px 4px 0;color:#fff}
 .dots::after{content:"▮";animation:blink .6s infinite;color:var(--c)}
 #right{grid-area:right;display:flex;flex-direction:column;gap:12px;min-height:0}
-#rem{flex:1;overflow:auto}#rem div{padding:8px 0;border-bottom:1px dashed var(--line)}#rem time{display:block;font:500 11px var(--h);color:var(--c)}
+#rem{flex:1;overflow:auto;min-height:0}#rem div{padding:8px 0;border-bottom:1px dashed var(--line)}#rem time{display:block;font:500 11px var(--h);color:var(--c)}
 form{display:flex;gap:10px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:rgba(2,7,13,.85);max-width:1400px;width:100%;margin:auto}
 input{flex:1;min-width:0;background:rgba(0,216,255,.06);border:1px solid var(--line);color:#fff;font:600 17px 'Rajdhani',sans-serif;padding:12px 14px;outline:none}
 input:focus{border-color:var(--c);box-shadow:0 0 12px rgba(0,216,255,.3)}
@@ -48,14 +52,14 @@ form button{width:50px;flex:none;border:1px solid var(--c);background:rgba(0,216
 @keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{opacity:.55}}@keyframes blink{50%{opacity:.3}}@keyframes in{from{opacity:0;transform:translateY(6px)}}
 @media(max-width:900px){main{grid-template:"reactor" auto "left" auto "chat" 1fr/minmax(0,1fr);gap:10px;padding:10px 12px}#right{display:none}
  #stats{flex-direction:row;gap:8px}#stats .p{flex:1;min-width:0;padding:8px}.v{font-size:18px}h2{font-size:8px;letter-spacing:.15em;margin-bottom:4px}.s{font-size:11px}
- #rx{flex-direction:row;justify-content:center;gap:16px}svg{width:118px;height:118px}#state{margin:0}header .hide{display:none}}
+ #rx{flex-direction:row;justify-content:center;gap:14px}svg{width:118px;height:118px;flex:none}#state{margin:0;letter-spacing:.2em}#heard{max-width:200px;font-size:14px}#hf{padding:9px 10px;font-size:10px}header .hide{display:none}}
 </style></head><body data-s="idle">
-<header><b>{{NAME}}</b><span class="on hide">EN LÍNEA</span><button id="vt" type="button">VOZ</button><div id="clock"></div></header>
+<header><b>{{NAME}}</b><span class="on hide">EN LÍNEA</span><button id="vt" type="button" title="Leer siempre las respuestas en voz alta">🔊 VOZ</button><div id="clock"></div></header>
 <main>
  <section id="rx"><svg viewBox="0 0 200 200"><defs><radialGradient id="g"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#b8f6ff"/><stop offset="1" stop-color="#00d8ff" stop-opacity=".15"/></radialGradient></defs>
   <circle class="r1" cx="100" cy="100" r="97"/><circle class="r2" cx="100" cy="100" r="86"/><circle class="r3" cx="100" cy="100" r="72"/>
   <circle class="r4" cx="100" cy="100" r="54"/><circle class="r5" cx="100" cy="100" r="40"/><circle class="core" cx="100" cy="100" r="34"/></svg>
-  <div><div id="state">EN ESPERA</div></div></section>
+  <div id="vx"><div id="state">EN ESPERA</div><div id="heard" class="d">Pulse para hablar sin manos</div><button id="hf" type="button">🎙 MANOS LIBRES</button></div></section>
  <aside id="stats">
   <div class="p"><h2>MEMORIA</h2><div class="v" id="sf">0</div><div class="s">datos sobre ti</div><div class="bar"><i id="bf"></i></div></div>
   <div class="p"><h2>AVISOS</h2><div class="v" id="sr">0</div><div class="s">pendientes</div><div class="bar"><i id="br"></i></div></div>
@@ -64,31 +68,68 @@ form button{width:50px;flex:none;border:1px solid var(--c);background:rgba(0,216
  </aside>
  <section id="chat" class="p"><div id="log"></div></section>
  <aside id="right"><div class="p" id="rem"><h2>RECORDATORIOS</h2><div id="rl"></div></div>
-  <div class="p"><h2>SISTEMA</h2><div class="s" id="sys"></div></div></aside>
+  <div class="p" id="cmds"><h2>CONTROL POR VOZ</h2><ul><li><em>«Jarvis»</em> → le escucha</li><li><em>«Jarvis, ¿qué tengo hoy?»</em></li><li><em>«Jarvis, recuérdame…»</em></li><li><em>«Para» / «Silencio»</em> → se calla</li><li><em>«Deja de escuchar»</em> → apaga el micro</li><li>Tras responder, 8 s para seguir hablando sin decir su nombre</li></ul></div>
+  <div class="p"><h2>SISTEMA</h2><div class="s" id="sys" style="white-space:normal"></div></div></aside>
 </main>
-<form id="f"><input id="i" placeholder="Hable, señor…" autocomplete="off"><button type="button" id="mic">🎤</button><button>➤</button></form>
+<form id="f"><input id="i" placeholder="Escriba o diga «Jarvis»…" autocomplete="off"><button type="button" id="mic">🎤</button><button>➤</button></form>
 <script>
-const $=s=>document.getElementById(s),NAME=document.title,R={daily:'diario',weekly:'semanal'},L={idle:'EN ESPERA',think:'PROCESANDO',listen:'ESCUCHANDO',speak:'HABLANDO'};
-let voice=localStorage.getItem('voz')==='1',loaded=false;$('vt').classList.toggle('a',voice);
-const st=s=>{document.body.dataset.s=s;$('state').textContent=L[s]};
+const $=s=>document.getElementById(s),NAME=document.title,R={daily:'diario',weekly:'semanal'},
+ L={idle:'EN ESPERA',armed:'ESCUCHA ACTIVA',listen:'ESCUCHANDO',think:'PROCESANDO',speak:'HABLANDO'},
+ SR=window.SpeechRecognition||window.webkitSpeechRecognition,TTS=window.speechSynthesis;
+const ls=(k,v)=>{try{return v===undefined?localStorage.getItem(k):localStorage.setItem(k,v)}catch(e){}};
+let V={wake_words:['jarvis']},WAKE=/\bjarvis\b[\s,.:;!]*/i,voice=ls('voz')==='1',hands=false,rec=null,busy=false,awake=0,follow=0,lock=null,loaded=false;
+$('vt').classList.toggle('a',voice);
+const W=()=>V.wake_words[0].replace(/^./,c=>c.toUpperCase()),st=s=>{document.body.dataset.s=s;$('state').textContent=L[s]};
+const heard=(t,dim)=>{$('heard').textContent=t;$('heard').classList.toggle('d',!!dim)};
+const idle=()=>{if(busy||TTS&&TTS.speaking)return;const n=Date.now(),on=awake>n||follow>n;
+ st(hands?(on?'listen':'armed'):'idle');heard(hands?(on?'Le escucho, señor…':`Diga «${W()}» y su orden`):'Pulse para hablar sin manos',1)};
 const add=(t,u,cls='')=>{const d=document.createElement('div'),b=document.createElement('b'),p=document.createElement('span');d.className='m '+(u?'u':'j');
  b.textContent=u?'USTED':NAME+' ›';p.textContent=t;p.className=cls;d.append(b,p);$('log').append(d);$('log').scrollTop=1e9;return p};
-const tick=()=>{const d=new Date();$('clock').innerHTML=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})+'<small>'+d.toLocaleDateString([],{weekday:'short',day:'numeric',month:'short'}).toUpperCase()+'</small>'};
+const tick=()=>{const d=new Date();$('clock').innerHTML=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})+'<small>'+d.toLocaleDateString([],{weekday:'short',day:'numeric',month:'short'}).toUpperCase()+'</small>';
+ if(hands&&!rec&&!busy&&!(TTS&&TTS.speaking))listen();if(awake&&awake<Date.now()){awake=0;idle()}};
 async function load(){try{const s=await(await fetch('/status')).json(),r=s.reminders;
+ if(!loaded){V=s.voice;WAKE=new RegExp('\\b('+V.wake_words.join('|')+')\\b[\\s,.:;!]*','i')}
  $('sf').textContent=s.facts;$('bf').style.width=Math.min(100,s.facts*4)+'%';$('sr').textContent=r.length;$('br').style.width=Math.min(100,r.length*10)+'%';
- $('sn').textContent=r[0]?r[0][0].slice(11):'--:--';$('snt').title='';const hoy=new Date().toLocaleDateString('sv');$('snt').textContent=r[0]?(r[0][0].slice(0,10)==hoy?'':r[0][0].slice(8,10)+'/'+r[0][0].slice(5,7)+' · ')+r[0][1]:'sin avisos';
+ const hoy=new Date().toLocaleDateString('sv');$('sn').textContent=r[0]?r[0][0].slice(11):'--:--';
+ $('snt').textContent=r[0]?(r[0][0].slice(0,10)==hoy?'':r[0][0].slice(8,10)+'/'+r[0][0].slice(5,7)+' · ')+r[0][1]:'sin avisos';
  $('sm').textContent=s.model.replace('claude-','').toUpperCase();$('smt').textContent=s.free?'local · gratis':'Claude API';
  $('rl').replaceChildren(...r.map(([d,t,rep])=>{const e=document.createElement('div'),tm=document.createElement('time');tm.textContent=d+(rep?' ⟳ '+R[rep]:'');e.append(tm,t);return e}));
- $('sys').textContent=`Enlace estable · memoria ${s.facts} · avisos ${r.length}`;
- if(!loaded){loaded=true;s.chat.forEach(([ro,t])=>add(t,ro=='user'));if(!s.chat.length)add('Todos los sistemas operativos. ¿En qué puedo ayudarle?')}}catch(e){}}
-async function send(t){if(!t.trim())return;add(t,1);$('i').value='';st('think');const p=add('','',  'dots');
- try{p.textContent=(await(await fetch('/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg:t})})).json()).reply}catch(e){p.textContent='Sin conexión con el servidor.'}
- p.className='';$('log').scrollTop=1e9;load();
- if(voice&&speechSynthesis){const u=new SpeechSynthesisUtterance(p.textContent);u.lang=navigator.language;u.onend=()=>st('idle');st('speak');speechSynthesis.speak(u)}else st('idle')}
+ $('sys').textContent=`Enlace estable · memoria ${s.facts} · avisos ${r.length} · voz ${SR?'lista':'no disponible'}`;
+ if(!loaded){loaded=true;s.chat.forEach(([ro,t])=>add(t,ro=='user'));if(!s.chat.length)add('Todos los sistemas operativos. ¿En qué puedo ayudarle?');if(ls('manos')==='1')setHands(true,false)}}catch(e){}}
+// ── Voz: escuchar ──
+function listen(){if(!SR||rec)return;rec=new SR();rec.lang=V.lang||navigator.language;rec.continuous=hands;rec.interimResults=true;
+ rec.onresult=e=>{let fin='',tmp='';for(let k=e.resultIndex;k<e.results.length;k++)e.results[k].isFinal?fin+=e.results[k][0].transcript:tmp+=e.results[k][0].transcript;
+  if(tmp)heard('«'+tmp.trim()+'»');if(fin.trim())onHeard(fin.trim())};
+ rec.onerror=e=>{if(/not-allowed/.test(e.error)){setHands(false);heard('Permiso de micrófono denegado',1)}};
+ rec.onend=()=>{rec=null;hands?setTimeout(()=>hands&&!busy&&!(TTS&&TTS.speaking)&&listen(),300):idle()};
+ try{rec.start()}catch(e){rec=null}}
+const mute=()=>{if(rec){rec.onend=null;rec.abort();rec=null}};
+function onHeard(t){const n=t.toLowerCase().replace(/[.!¡?¿,]/g,'').trim(),now=Date.now();
+ if(/^(para|parar|silencio|cállate|callate|basta|stop|calla)$/.test(n)){TTS&&TTS.cancel();return idle()}
+ if(/deja de escuchar|(desactiva|apaga) (la escucha|el micro|manos libres|la voz)/.test(n))return setHands(false,true);
+ if(!hands)return send(t,true);
+ const m=t.match(WAKE);
+ if(m){const c=t.slice(m.index+m[0].length).trim();if(c.length>1)return send(c,true);awake=now+8000;return say(V.ack||'¿Sí, señor?')}
+ if(awake>now||follow>now){awake=follow=0;return send(t,true)}
+ heard('«'+t+'»',1)}
+// ── Voz: hablar ──
+function say(t){if(!TTS){follow=Date.now()+8000;return idle()}mute();TTS.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=V.lang||navigator.language;u.rate=V.rate||1;u.pitch=V.pitch||1;
+ const vs=TTS.getVoices().filter(v=>v.lang.replace('_','-').startsWith(u.lang.slice(0,2)));
+ u.voice=vs.find(v=>V.name&&v.name.includes(V.name))||vs.find(v=>v.lang.replace('_','-')==u.lang)||vs[0]||null;
+ u.onend=u.onerror=()=>{follow=Date.now()+8000;idle();if(hands)listen()};st('speak');heard('',1);TTS.speak(u)}
+async function send(t,byVoice){if(!t.trim()||busy)return;busy=true;mute();add(t,1);$('i').value='';st('think');heard('«'+t+'»',1);const p=add('','','dots');
+ try{p.textContent=(await(await fetch('/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg:t,voice:!!byVoice})})).json()).reply}catch(e){p.textContent='Sin conexión con el servidor.'}
+ p.className='';$('log').scrollTop=1e9;busy=false;load();(byVoice||voice)?say(p.textContent):(idle(),hands&&listen())}
+// ── Modo manos libres ──
+async function setHands(on,announce){if(on&&!SR)return alert('Tu navegador no permite control por voz. Usa Chrome, Edge o Safari.');
+ hands=on;ls('manos',on?'1':'0');$('hf').classList.toggle('a',on);$('hf').textContent=on?'🎙 MANOS LIBRES: ON':'🎙 MANOS LIBRES';mute();
+ try{on?(lock=await navigator.wakeLock.request('screen')):(lock&&lock.release(),lock=null)}catch(e){}
+ if(announce)say(on?`Manos libres activado. Diga «${W()}» cuando me necesite.`:'Manos libres desactivado.');else{idle();on&&listen()}}
+document.addEventListener('visibilitychange',async()=>{if(hands&&document.visibilityState=='visible')try{lock=await navigator.wakeLock.request('screen')}catch(e){}});
+$('hf').onclick=()=>setHands(!hands,true);
+$('mic').onclick=()=>{if(!SR)return alert('Tu navegador no permite control por voz. Usa Chrome, Edge o Safari.');TTS&&TTS.cancel();
+ if(hands){awake=Date.now()+8000;idle();return listen()}mute();listen();st('listen');heard('Le escucho, señor…',1)};
 $('f').onsubmit=e=>{e.preventDefault();send($('i').value)};
-$('vt').onclick=()=>{voice=!voice;localStorage.setItem('voz',voice?'1':'0');$('vt').classList.toggle('a',voice)};
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-$('mic').onclick=()=>{if(!SR)return alert('Tu navegador no soporta voz (usa Chrome).');const s=new SR();s.lang=navigator.language;
- s.onresult=e=>{voice=true;$('vt').classList.add('a');send(e.results[0][0].transcript)};s.onend=()=>document.body.dataset.s=='listen'&&st('idle');st('listen');s.start()};
+$('vt').onclick=()=>{voice=!voice;ls('voz',voice?'1':'0');$('vt').classList.toggle('a',voice)};
 tick();setInterval(tick,1000);load();setInterval(load,30000);
 </script></body></html>

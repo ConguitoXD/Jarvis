@@ -90,13 +90,15 @@ def send_email(to: str, subject: str, body: str) -> str:
 
 TOOLS = [remember, forget, add_reminder, cancel_reminder, send_email] + ([] if URL else [{"type": "web_search_20260209", "name": "web_search"}])
 
-def ask(msg):  # el cerebro: memoria + contexto + herramientas
+def ask(msg, voice=False):  # el cerebro: memoria + contexto + herramientas
     with LOCK:
         facts = "\n".join(f"[#{i}] {t}" for i, t in q("SELECT id, text FROM facts")) or "(vacía)"
         rems = "\n".join(f"[#{i}] {d} {t} {r}" for i, d, t, r in q("SELECT id,due,text,repeat FROM reminders WHERE done=0 ORDER BY due")) or "(ninguno)"
         system = (C["personality"].format(**C) + f"\n\nResponde siempre en {C.get('language', 'español')}. "
                   f"Fecha y hora actual: {now()} ({TZ}). Email del usuario: {C.get('owner_email', '?')}.\n"
-                  f"Usa 'remember' cuando aprendas algo importante del usuario.\n\nMEMORIA:\n{facts}\n\nRECORDATORIOS PENDIENTES:\n{rems}")
+                  f"Usa 'remember' cuando aprendas algo importante del usuario.\n"
+                  + ("Este mensaje llega por voz y tu respuesta se leerá en voz alta: responde en 1-3 frases naturales, sin markdown, listas, emojis ni URLs.\n" if voice else "")
+                  + f"\nMEMORIA:\n{facts}\n\nRECORDATORIOS PENDIENTES:\n{rems}")
         hist = [{"role": r, "content": t} for r, t in q("SELECT role, text FROM (SELECT * FROM chat ORDER BY id DESC LIMIT ?) ORDER BY id", C.get("history", 30))]
         while hist and hist[0]["role"] != "user": hist.pop(0)
         model = C.get("model", "claude-opus-5")
@@ -135,7 +137,7 @@ def telegram():  # habla con Jarvis desde el móvil
         except Exception as e: print("Error Telegram:", e, flush=True); time.sleep(5)
 
 def status():  # datos en vivo para el HUD
-    return {"model": C.get("model", "claude-opus-5"), "free": bool(URL), "facts": q("SELECT COUNT(*) FROM facts")[0][0],
+    return {"voice": {"wake_words": [C["name"].lower()], **C.get("voice", {})}, "model": C.get("model", "claude-opus-5"), "free": bool(URL), "facts": q("SELECT COUNT(*) FROM facts")[0][0],
             "reminders": q("SELECT due, text, repeat FROM reminders WHERE done=0 ORDER BY due"),
             "chat": q("SELECT role, text FROM (SELECT * FROM chat ORDER BY id DESC LIMIT 20) ORDER BY id")}
 
@@ -153,7 +155,7 @@ class Web(BaseHTTPRequestHandler):  # interfaz web con voz
         self.send(PAGE.replace(b"{{NAME}}", C["name"].encode()), "text/html; charset=utf-8")
     def do_POST(self):
         if not self.auth(): return
-        try: r = ask(json.loads(self.rfile.read(int(self.headers["Content-Length"])))["msg"])
+        try: b = json.loads(self.rfile.read(int(self.headers["Content-Length"]))); r = ask(b["msg"], b.get("voice", False))
         except Exception as e: r = f"Error: {e}"
         self.send(json.dumps({"reply": r}).encode(), "application/json")
     def log_message(self, *a): pass

@@ -1,16 +1,27 @@
 # 🤖 J.A.R.V.I.S. — tu asistente personal, como el de Tony Stark
 
 Un asistente con inteligencia artificial que **vive en un servidor 24 horas al día**, **tiene memoria propia**, **manda emails** y **te avisa de tus cosas importantes**.
-Le hablas **por voz o por escrito** desde el navegador, o **desde el móvil por Telegram**.
+Se controla **por voz, sin tocar nada**: dices *«Jarvis, …»* y te responde hablando. También puedes escribirle desde el navegador o **desde el móvil por Telegram**.
 
 - ✅ **100 % código abierto** (licencia MIT): úsalo, cámbialo o compártelo gratis.
-- ✅ **Todo el programa ocupa un archivo de unas 160 líneas** ([`jarvis.py`](jarvis.py)) más una página web ([`index.html`](index.html)).
+- ✅ **Todo el programa ocupa un archivo de unas 170 líneas** ([`jarvis.py`](jarvis.py)) más una página web ([`index.html`](index.html)).
+- ✅ **Control por voz manos libres** con palabra de activación, como en las películas.
 - ✅ **Puede ser 100 % gratis**: si no quieres pagar, usa la IA gratuita en tu propio ordenador ([ver cómo](#-opción-100--gratis-sin-pagar-nada)).
 - ✅ **Completamente personalizable**: nombre, personalidad, idioma, zona horaria, voz, informe diario… todo en un solo archivo de texto.
 
 <p align="center"><img src="docs/hud-movil.png" width="260" alt="Jarvis en el móvil"> &nbsp; <img src="docs/hud-escritorio.png" width="560" alt="Jarvis en el ordenador"></p>
 
-La interfaz es un **HUD estilo Iron Man**: un reactor animado que cambia según el estado de Jarvis (en espera, procesando, escuchando o hablando), un reloj, paneles con tu memoria y tus avisos en vivo, y el chat. Está pensada primero para el móvil.
+La interfaz es un **HUD estilo Iron Man** pensado primero para el móvil. El reactor cambia de color según lo que hace Jarvis:
+
+| Reactor | Estado | Qué significa |
+|---|---|---|
+| 🔵 Azul, lento | EN ESPERA | Manos libres apagado. Escríbele o pulsa 🎤. |
+| 🟢 Anillo verde | ESCUCHA ACTIVA | Manos libres encendido: espera a que digas «Jarvis». |
+| 🟠 Naranja | ESCUCHANDO | Te está escuchando. Debajo ves en directo lo que entiende. |
+| 🔵 Gira rápido | PROCESANDO | Está pensando la respuesta. |
+| 🔵 Núcleo latiendo | HABLANDO | Te está respondiendo en voz alta. |
+
+Además tiene reloj, paneles con tu memoria y tus avisos en vivo, el chat y, en el ordenador, la lista de recordatorios y una chuleta de comandos de voz.
 
 ---
 
@@ -18,6 +29,7 @@ La interfaz es un **HUD estilo Iron Man**: un reactor animado que cambia según 
 
 | Le dices… | Jarvis… |
 |---|---|
+| 🎙 *"Jarvis, ¿qué tengo hoy?"* (sin tocar el móvil) | Te **responde hablando** y sigue escuchando unos segundos por si quieres añadir algo. |
 | *"Recuerda que mi mujer se llama Pepper y le encantan las fresas"* | Lo guarda en su **memoria permanente** y lo tendrá en cuenta siempre. |
 | *"Avísame mañana a las 9 de que tengo dentista"* | Crea un **recordatorio** y a las 9:00 te llega un **email** (y un Telegram). |
 | *"Recuérdame cada lunes a las 8 que saque la basura"* | Recordatorio **repetitivo** (diario o semanal). |
@@ -77,7 +89,7 @@ python jarvis.py
 
 ### Paso 3 — Háblale
 
-- **Navegador**: abre `http://localhost:8000` (o `http://IP-DE-TU-SERVIDOR:8000`). Usuario: `jarvis`, contraseña: la que pusiste. Pulsa 🎤 para hablarle por voz (mejor en Chrome) y te **responderá hablando**.
+- **Navegador (con voz)**: abre `http://localhost:8000` (o `http://IP-DE-TU-SERVIDOR:8000`). Usuario: `jarvis`, contraseña: la que pusiste. Pulsa **🎙 MANOS LIBRES** y dile *«Jarvis, …»*. Más detalles en la sección «Control por voz» más abajo.
 - **Telegram**: escribe a tu bot. La primera vez te dirá tu *chat id*; ponlo en `"allowed_chats": [123456789]` en `config.json` y reinicia. Así **solo tú** puedes usarlo.
 - **Terminal**: `python jarvis.py chat`.
 
@@ -138,6 +150,35 @@ python jarvis.py
 
 ---
 
+## 🎙️ Control por voz
+
+Jarvis funciona **solo con la voz**, sin tocar la pantalla.
+
+1. Abre la web de Jarvis (en el móvil, tablet u ordenador) y pulsa **🎙 MANOS LIBRES**. La primera vez el navegador te pedirá permiso para usar el micrófono: acéptalo.
+2. El reactor se pone con un **anillo verde**: está esperando su nombre.
+3. Di **«Jarvis»** seguido de lo que quieras, todo seguido: *«Jarvis, recuérdame mañana a las 9 que tengo dentista»*.
+   - O di solo **«Jarvis»**: te contestará *«¿Sí, señor?»* y tendrás 8 segundos para hablar.
+4. Te responde **en voz alta**. Después sigue escuchando **8 segundos** para que puedas contestarle sin repetir su nombre, como en una conversación normal.
+
+| Di… | Qué pasa |
+|---|---|
+| *«Jarvis»* | Se activa y te escucha. |
+| *«Jarvis, …cualquier cosa…»* | Lo hace y te responde hablando. |
+| *«Para»*, *«Silencio»*, *«Basta»* | Se calla al momento. |
+| *«Deja de escuchar»* / *«Apaga el micro»* | Desactiva el modo manos libres. |
+
+**Otras formas de usar la voz**
+- **Pulsar y hablar**: con manos libres apagado, pulsa 🎤, di tu frase y listo.
+- **🔊 VOZ** (arriba): si está encendido, Jarvis lee en voz alta **también** las respuestas a lo que escribes.
+
+**Consejos**
+- Mientras el modo manos libres está encendido, **la pantalla no se apaga sola**, para que Jarvis siga escuchando. Déjalo en un soporte, enchufado, y tendrás tu Jarvis de escritorio.
+- Funciona en **Chrome, Edge y Safari** (móvil y ordenador). Firefox todavía no permite reconocer voz.
+- Fuera de `localhost`, el micrófono **solo funciona con HTTPS** (ver la sección «Tenerlo encendido 24 horas»). Con Tailscale puedes activar HTTPS gratis con `tailscale serve`.
+- Si no te entiende bien el nombre, añade cómo lo oye a la lista `wake_words` (por ejemplo `"yarvis"`). Si cambias el nombre del asistente (p. ej. `"FRIDAY"`), pon también `"wake_words": ["friday"]`.
+
+---
+
 ## ☁️ Tenerlo encendido 24 horas
 
 | Dónde | Cómo |
@@ -184,6 +225,7 @@ Y ejecuta `sudo systemctl enable --now jarvis`.
 | `personality` | **Su forma de ser.** Escríbela como quieras. `{name}` y `{owner}` se sustituyen solos | `"Eres un mayordomo sarcástico…"` |
 | `model` | Modelo de IA | Claude: `"claude-opus-5"` (más listo), `"claude-sonnet-5"`, `"claude-haiku-4-5"` (el más barato). Gratis: `"qwen3:8b"` |
 | `base_url` | Vacío = Claude. `"http://localhost:11434"` = Ollama gratis en tu PC | `""` |
+| `voice` | Ajustes de voz: `wake_words` (palabras que lo activan), `lang` (idioma de la voz, p. ej. `"es-ES"`, `"es-MX"`, `"en-US"`), `rate` (velocidad), `pitch` (tono; más bajo = más grave) y `name` (parte del nombre de una voz concreta de tu dispositivo, p. ej. `"Jorge"`) | `{"wake_words": ["jarvis"], "lang": "es-ES", "rate": 1.05, "pitch": 0.9}` |
 | `history` | Cuántos mensajes recientes de la conversación recuerda | `30` |
 | `briefing_time` | Hora del informe diario (vacío `""` = desactivado) | `"08:00"` |
 | `briefing_prompt` | Qué quieres en tu informe diario | `"Resúmeme el día y dame una frase motivadora"` |
@@ -231,7 +273,11 @@ El programa es **gratis**. Con el [modo gratis](#-opción-100--gratis-sin-pagar-
 - **"authentication_error" / "invalid x-api-key"** → la clave de `api_key` está mal copiada o no tienes saldo.
 - **No llegan los emails** → usa la *contraseña de aplicación* de Gmail, no la normal. Revisa la carpeta de spam.
 - **Los recordatorios llegan a otra hora** → revisa `timezone`.
-- **El micrófono no funciona** → usa Chrome y entra por `localhost` o HTTPS.
+- **El micrófono no funciona** → usa Chrome, Edge o Safari y entra por `localhost` o HTTPS. Revisa que diste permiso al micrófono (icono del candado junto a la dirección).
+- **No reacciona cuando digo «Jarvis»** → comprueba que el botón pone *MANOS LIBRES: ON*. Mira debajo del reactor qué entiende y añade esa palabra a `wake_words`.
+- **En Android suena un pitido cada pocos segundos** → es Chrome reiniciando la escucha. Puedes bajar el volumen de notificaciones o usar *pulsar y hablar* (🎤).
+- **La voz suena rara o en otro idioma** → cambia `voice.lang` o elige otra voz con `voice.name`. Las voces disponibles dependen de tu móvil u ordenador.
+- **El modo manos libres se para con el móvil en segundo plano o la pantalla bloqueada** → es una limitación de los navegadores. Déjalo con la web abierta en primer plano.
 - **Telegram dice "No autorizado"** → copia el número que te da en `allowed_chats` y reinicia.
 - **Modo gratis: "Connection refused"** → Ollama no está abierto. Ábrelo o ejecuta `ollama serve`.
 - **Modo gratis: "model not found"** → falta descargarlo: `ollama pull qwen3:8b` (el nombre debe coincidir con `"model"`).
@@ -243,6 +289,7 @@ El programa es **gratis**. Con el [modo gratis](#-opción-100--gratis-sin-pagar-
 ## 🔐 Privacidad y seguridad
 
 - Tus datos (memoria, recordatorios, conversación) se guardan **solo en tu servidor**. Con Claude, los mensajes se envían a su API para generar las respuestas; en el modo gratis con Ollama, **nada sale de tu ordenador** (salvo los emails y Telegram que tú actives).
+- **Voz:** el reconocimiento de voz lo hace tu navegador. Chrome y Edge envían el audio a los servidores de Google o Microsoft para transcribirlo; Safari puede hacerlo en el propio dispositivo. La voz de Jarvis se genera en tu dispositivo. El micrófono solo está activo con *manos libres* encendido o al pulsar 🎤.
 - `config.json` contiene tus contraseñas: **nunca lo subas a GitHub** (ya está en `.gitignore`).
 - Jarvis puede enviar emails en tu nombre; está instruido para confirmar contigo antes, salvo que se lo pidas claramente.
 
@@ -250,7 +297,7 @@ El programa es **gratis**. Con el [modo gratis](#-opción-100--gratis-sin-pagar-
 
 ## 🌍 English (short version)
 
-A self-hosted, fully customizable Tony-Stark-style AI assistant in **one ~160-line Python file**: persistent memory (SQLite), email sending, scheduled reminders and a daily briefing delivered by email/Telegram, web search, and a voice-enabled web UI. Setup: `cp config.example.json config.json`, fill in your Claude API key, email (SMTP) and password, set `"language": "English"`, then `docker compose up -d` (runs 24/7, auto-restarts) or `pip install -r requirements.txt && python jarvis.py`. Open `http://localhost:8000` (user `jarvis`). **Free mode, no API costs:** install [Ollama](https://ollama.com), run `ollama pull qwen3:8b`, and set `"base_url": "http://localhost:11434"` and `"model": "qwen3:8b"` in `config.json` (or use `docker compose -f docker-compose.gratis.yml up -d`). Everything runs on your own computer. MIT licensed.
+A self-hosted, fully customizable Tony-Stark-style AI assistant in **one ~170-line Python file**: persistent memory (SQLite), email sending, scheduled reminders and a daily briefing delivered by email/Telegram, web search, and an Iron-Man-style HUD with **hands-free voice control** (say *"Jarvis, …"* and it answers out loud; say *"stop"* to silence it). Setup: `cp config.example.json config.json`, fill in your Claude API key, email (SMTP) and password, set `"language": "English"`, then `docker compose up -d` (runs 24/7, auto-restarts) or `pip install -r requirements.txt && python jarvis.py`. Open `http://localhost:8000` (user `jarvis`). **Free mode, no API costs:** install [Ollama](https://ollama.com), run `ollama pull qwen3:8b`, and set `"base_url": "http://localhost:11434"` and `"model": "qwen3:8b"` in `config.json` (or use `docker compose -f docker-compose.gratis.yml up -d`). Everything runs on your own computer. MIT licensed.
 
 ---
 
