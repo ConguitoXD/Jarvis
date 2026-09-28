@@ -1,0 +1,19 @@
+# Modo 100 % gratis: la IA (Ollama) corre en tu propio ordenador/servidor, sin pagar API.
+# Uso: docker compose -f docker-compose.gratis.yml up -d
+#      docker compose -f docker-compose.gratis.yml exec ollama ollama pull qwen3:8b
+services:
+  ollama:
+    image: ollama/ollama
+    restart: always
+    volumes:
+      - ./ollama:/root/.ollama     # los modelos descargados se guardan aquí
+  jarvis:
+    build: .
+    restart: always
+    depends_on: [ollama]
+    ports: ["8000:8000"]
+    environment:
+      - JARVIS_BASE_URL=http://ollama:11434
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./data:/app/data

@@ -5,6 +5,7 @@ Le hablas **por voz o por escrito** desde el navegador, o **desde el móvil por 
 
 - ✅ **100 % código abierto** (licencia MIT): úsalo, cámbialo o compártelo gratis.
 - ✅ **Todo el programa ocupa un archivo de unas 160 líneas** ([`jarvis.py`](jarvis.py)) más una página web ([`index.html`](index.html)).
+- ✅ **Puede ser 100 % gratis**: si no quieres pagar, usa la IA gratuita en tu propio ordenador ([ver cómo](#-opción-100--gratis-sin-pagar-nada)).
 - ✅ **Completamente personalizable**: nombre, personalidad, idioma, zona horaria, voz, informe diario… todo en un solo archivo de texto.
 
 ---
@@ -25,7 +26,9 @@ Le hablas **por voz o por escrito** desde el navegador, o **desde el móvil por 
 
 ## 📋 Qué necesitas (10 minutos)
 
-1. **Una clave de API de Claude** (el "cerebro"). Entra en [console.anthropic.com](https://console.anthropic.com), crea una cuenta, añade saldo y pulsa **"API Keys → Create Key"**. Copia la clave (empieza por `sk-ant-`).
+1. **Un "cerebro" (la IA)**. Dos opciones:
+   - **Gratis**: tu propio ordenador con Ollama → ve a [Opción 100 % gratis](#-opción-100--gratis-sin-pagar-nada) y sáltate este punto.
+   - **De pago, la más lista**: una clave de API de Claude. Entra en [console.anthropic.com](https://console.anthropic.com), crea una cuenta, añade saldo y pulsa **"API Keys → Create Key"**. Copia la clave (empieza por `sk-ant-`).
 2. **Un email para enviar avisos** (opcional pero recomendado). Con Gmail:
    - Activa la [verificación en dos pasos](https://myaccount.google.com/security).
    - Crea una **[contraseña de aplicación](https://myaccount.google.com/apppasswords)** (16 letras). Esa es la que usarás, **no** tu contraseña normal.
@@ -46,7 +49,7 @@ cp config.example.json config.json
 
 Abre `config.json` con cualquier editor de texto (Bloc de notas, TextEdit, nano…) y rellena como mínimo:
 
-- `"api_key"`: tu clave de Claude.
+- `"api_key"`: tu clave de Claude (o déjala vacía si usas el modo gratis).
 - `"owner"` y `"owner_email"`: tu nombre y el email donde quieres recibir los avisos.
 - `"web_password"`: una contraseña para entrar en la web de Jarvis (sin tildes ni ñ).
 - La sección `"email"` con tu Gmail y la contraseña de aplicación.
@@ -76,13 +79,68 @@ python jarvis.py
 
 ---
 
+## 🆓 Opción 100 % gratis (sin pagar nada)
+
+¿No tienes dinero para pagar la API? No pasa nada: Jarvis puede usar una **IA gratuita que funciona dentro de tu propio ordenador** gracias a [Ollama](https://ollama.com). Sin cuentas, sin tarjeta, sin límites de uso y **tus conversaciones nunca salen de tu casa**.
+
+| | 🆓 Gratis (Ollama en tu PC) | 💳 De pago (Claude) |
+|---|---|---|
+| Coste | 0 € (solo la luz del ordenador) | Unos euros al mes según uso |
+| Inteligencia | Buena para el día a día | La mejor |
+| Buscar en internet | ❌ | ✅ |
+| Memoria, recordatorios, emails, Telegram, voz | ✅ | ✅ |
+| Privacidad | Total: todo se queda en tu PC | Los mensajes pasan por la API de Claude |
+| Necesitas | Un ordenador con **8 GB de RAM o más** | Cualquier ordenador o servidor |
+
+### Paso a paso
+
+1. **Instala Ollama** desde [ollama.com/download](https://ollama.com/download) (Windows, Mac o Linux). En Linux: `curl -fsSL https://ollama.com/install.sh | sh`.
+2. **Descarga un modelo** (solo la primera vez; ocupa unos GB). Abre una terminal y escribe **uno** de estos, según la memoria RAM de tu ordenador:
+
+   | Tu ordenador | Comando | `"model"` en config.json |
+   |---|---|---|
+   | 8 GB de RAM | `ollama pull qwen3:4b` | `"qwen3:4b"` |
+   | 16 GB de RAM o más (recomendado) | `ollama pull qwen3:8b` | `"qwen3:8b"` |
+   | 32 GB o una buena tarjeta gráfica | `ollama pull qwen3:14b` | `"qwen3:14b"` |
+
+   *(Puedes usar cualquier modelo de [ollama.com/search](https://ollama.com/search?c=tools) que tenga la etiqueta **tools**, para que pueda usar sus herramientas.)*
+3. **En `config.json`** pon:
+   ```json
+   "api_key": "",
+   "base_url": "http://localhost:11434",
+   "model": "qwen3:8b",
+   ```
+4. **Arranca Jarvis** con `pip install -r requirements.txt` y `python jarvis.py`, como en el [Paso 2](#paso-2--ponlo-en-marcha) (opción B). ¡Listo, gratis para siempre!
+
+> 🐳 **¿Prefieres Docker?** `docker compose -f docker-compose.gratis.yml up -d` arranca Jarvis **y** Ollama juntos. Después descarga el modelo con
+> `docker compose -f docker-compose.gratis.yml exec ollama ollama pull qwen3:8b`. (En este modo no hace falta tocar `base_url`.)
+> En Windows y Mac es más rápido instalar Ollama normal (usa tu tarjeta gráfica); Docker es ideal para servidores Linux.
+
+### Tener tu ordenador como servidor 24 h, gratis
+
+- **Que no se duerma**: en Windows, *Configuración → Sistema → Inicio/apagado → Suspender: Nunca*. En Mac, *Ajustes → Batería/Energía → Evitar reposo automático*. En Linux, desactiva la suspensión en los ajustes de energía.
+- **Que Jarvis arranque solo al encender el PC**:
+  - Con Docker Desktop: actívale *"Start Docker Desktop when you sign in"* y ya está (Jarvis tiene `restart: always`).
+  - En Windows sin Docker: pulsa `Win + R`, escribe `shell:startup` y crea ahí un archivo `jarvis.bat` con:
+    ```bat
+    cd /d C:\ruta\a\Jarvis
+    start "" pythonw jarvis.py
+    ```
+  - En Linux: usa el servicio systemd que se explica en la siguiente sección. Ollama ya se instala como servicio y arranca solo.
+- **Hablarle desde el móvil fuera de casa, gratis**: usa **Telegram**. Funciona sin abrir puertos del router ni configurar nada más. Si también quieres la web desde fuera, instala [Tailscale](https://tailscale.com) (gratis) en el PC y en el móvil y entra en `http://NOMBRE-DE-TU-PC:8000`.
+- **Emails gratis**: con tu Gmail y una contraseña de aplicación (ver [Qué necesitas](#-qué-necesitas-10-minutos)).
+
+> 💡 **¿No quieres dejar tu PC encendido?** [Oracle Cloud "Always Free"](https://www.oracle.com/cloud/free/) regala un servidor ARM de hasta 4 núcleos y 24 GB de RAM, suficiente para `qwen3:4b` u `qwen3:8b` (va algo más lento sin tarjeta gráfica). Crea un servidor Ubuntu y usa `docker-compose.gratis.yml`. Te pedirá una tarjeta para verificar tu identidad, pero no cobra mientras uses solo los recursos gratuitos.
+
+---
+
 ## ☁️ Tenerlo encendido 24 horas
 
 | Dónde | Cómo |
 |---|---|
 | **Servidor en la nube (VPS)** — Hetzner, DigitalOcean, OVH, Contabo, Oracle Cloud (tiene plan gratis)… | Crea un servidor Ubuntu, instala Docker, copia la carpeta y `docker compose up -d`. |
 | **Raspberry Pi o un ordenador viejo en casa** | Igual que arriba. Consume muy poco. |
-| **Railway / Render / Fly.io** | Sube el repositorio: detectan el `Dockerfile` solos. Añade un *volumen* en `/app/data` para que no pierda la memoria sube `config.json` como archivo secreto y pon la variable de entorno `JARVIS_CONFIG` con su ruta. |
+| **Railway / Render / Fly.io** | Sube el repositorio: detectan el `Dockerfile` solos. Añade un *volumen* en `/app/data` para que no pierda la memoria, sube `config.json` como archivo secreto y pon la variable de entorno `JARVIS_CONFIG` con su ruta. |
 | **Sin Docker, en Linux** | Crea un servicio (ver abajo). |
 
 <details><summary>Servicio de Linux (systemd) sin Docker</summary>
@@ -120,7 +178,8 @@ Y ejecuta `sudo systemctl enable --now jarvis`.
 | `language` | Idioma en el que responde | `"español"`, `"English"`, `"français"`, `"català"` |
 | `timezone` | Tu zona horaria ([lista](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)) | `"Europe/Madrid"`, `"America/Mexico_City"` |
 | `personality` | **Su forma de ser.** Escríbela como quieras. `{name}` y `{owner}` se sustituyen solos | `"Eres un mayordomo sarcástico…"` |
-| `model` | Modelo de IA de Claude | `"claude-opus-5"` (más listo), `"claude-sonnet-5"` (más barato), `"claude-haiku-4-5"` (el más barato) |
+| `model` | Modelo de IA | Claude: `"claude-opus-5"` (más listo), `"claude-sonnet-5"`, `"claude-haiku-4-5"` (el más barato). Gratis: `"qwen3:8b"` |
+| `base_url` | Vacío = Claude. `"http://localhost:11434"` = Ollama gratis en tu PC | `""` |
 | `history` | Cuántos mensajes recientes de la conversación recuerda | `30` |
 | `briefing_time` | Hora del informe diario (vacío `""` = desactivado) | `"08:00"` |
 | `briefing_prompt` | Qué quieres en tu informe diario | `"Resúmeme el día y dame una frase motivadora"` |
@@ -140,9 +199,9 @@ El **aspecto de la web** está en `index.html` (colores, textos). Para **añadir
                  │
                  ▼
           ┌─────────────┐      ┌──────────────────────────┐
-          │  jarvis.py  │ ───▶ │ Claude (el cerebro, IA)  │
-          └─────────────┘ ◀─── │ decide qué herramienta   │
-             │       │         │ usar y qué responder     │
+          │  jarvis.py  │ ───▶ │ El cerebro (IA): Claude  │
+          └─────────────┘ ◀─── │ u Ollama gratis. Decide  │
+             │       │         │ qué herramienta usar     │
              │       │         └──────────────────────────┘
              ▼       ▼
      memory.db     Herramientas: recordar · olvidar · recordatorios ·
@@ -159,7 +218,7 @@ El **aspecto de la web** está en `index.html` (colores, textos). Para **añadir
 
 ## 💶 ¿Cuánto cuesta?
 
-El programa es **gratis**. Solo pagas el uso de la IA a Anthropic (por uso, sin cuotas) y, si quieres, el servidor. Para un uso personal normal suelen ser unos pocos euros al mes; con `"model": "claude-haiku-4-5"` sale mucho más barato. Puedes ver y limitar el gasto en [console.anthropic.com](https://console.anthropic.com).
+El programa es **gratis**. Con el [modo gratis](#-opción-100--gratis-sin-pagar-nada) (Ollama en tu PC) **no pagas nada**. Con Claude pagas el uso de la IA a Anthropic (por uso, sin cuotas) y, si quieres, el servidor. Para un uso personal normal suelen ser unos pocos euros al mes; con `"model": "claude-haiku-4-5"` sale mucho más barato. Puedes ver y limitar el gasto en [console.anthropic.com](https://console.anthropic.com).
 
 ---
 
@@ -170,13 +229,16 @@ El programa es **gratis**. Solo pagas el uso de la IA a Anthropic (por uso, sin 
 - **Los recordatorios llegan a otra hora** → revisa `timezone`.
 - **El micrófono no funciona** → usa Chrome y entra por `localhost` o HTTPS.
 - **Telegram dice "No autorizado"** → copia el número que te da en `allowed_chats` y reinicia.
+- **Modo gratis: "Connection refused"** → Ollama no está abierto. Ábrelo o ejecuta `ollama serve`.
+- **Modo gratis: "model not found"** → falta descargarlo: `ollama pull qwen3:8b` (el nombre debe coincidir con `"model"`).
+- **Modo gratis: va lento** → usa un modelo más pequeño (`qwen3:4b`) o cierra otros programas.
 - **Ver qué está pasando** → `docker compose logs -f` (o mira la terminal donde lo lanzaste).
 
 ---
 
 ## 🔐 Privacidad y seguridad
 
-- Tus datos (memoria, recordatorios, conversación) se guardan **solo en tu servidor**. Los mensajes se envían a la API de Claude para generar las respuestas.
+- Tus datos (memoria, recordatorios, conversación) se guardan **solo en tu servidor**. Con Claude, los mensajes se envían a su API para generar las respuestas; en el modo gratis con Ollama, **nada sale de tu ordenador** (salvo los emails y Telegram que tú actives).
 - `config.json` contiene tus contraseñas: **nunca lo subas a GitHub** (ya está en `.gitignore`).
 - Jarvis puede enviar emails en tu nombre; está instruido para confirmar contigo antes, salvo que se lo pidas claramente.
 
@@ -184,7 +246,7 @@ El programa es **gratis**. Solo pagas el uso de la IA a Anthropic (por uso, sin 
 
 ## 🌍 English (short version)
 
-A self-hosted, fully customizable Tony-Stark-style AI assistant in **one ~160-line Python file**: persistent memory (SQLite), email sending, scheduled reminders and a daily briefing delivered by email/Telegram, web search, and a voice-enabled web UI. Setup: `cp config.example.json config.json`, fill in your Claude API key, email (SMTP) and password, set `"language": "English"`, then `docker compose up -d` (runs 24/7, auto-restarts) or `pip install -r requirements.txt && python jarvis.py`. Open `http://localhost:8000` (user `jarvis`). MIT licensed.
+A self-hosted, fully customizable Tony-Stark-style AI assistant in **one ~160-line Python file**: persistent memory (SQLite), email sending, scheduled reminders and a daily briefing delivered by email/Telegram, web search, and a voice-enabled web UI. Setup: `cp config.example.json config.json`, fill in your Claude API key, email (SMTP) and password, set `"language": "English"`, then `docker compose up -d` (runs 24/7, auto-restarts) or `pip install -r requirements.txt && python jarvis.py`. Open `http://localhost:8000` (user `jarvis`). **Free mode, no API costs:** install [Ollama](https://ollama.com), run `ollama pull qwen3:8b`, and set `"base_url": "http://localhost:11434"` and `"model": "qwen3:8b"` in `config.json` (or use `docker compose -f docker-compose.gratis.yml up -d`). Everything runs on your own computer. MIT licensed.
 
 ---
 

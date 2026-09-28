@@ -15,7 +15,8 @@ DB = sqlite3.connect(os.path.join(C.get("data_dir", "data"), "memory.db"), check
 DB.executescript("""CREATE TABLE IF NOT EXISTS facts(id INTEGER PRIMARY KEY, text TEXT, ts TEXT);
 CREATE TABLE IF NOT EXISTS reminders(id INTEGER PRIMARY KEY, due TEXT, text TEXT, repeat TEXT, done INT DEFAULT 0);
 CREATE TABLE IF NOT EXISTS chat(id INTEGER PRIMARY KEY, role TEXT, text TEXT, ts TEXT);""")
-AI = anthropic.Anthropic(api_key=C.get("api_key") or None)
+URL = os.getenv("JARVIS_BASE_URL") or C.get("base_url")  # vacío = Claude (de pago) · "http://localhost:11434" = Ollama (gratis, en tu PC)
+AI = anthropic.Anthropic(api_key=C.get("api_key") or ("ollama" if URL else None), base_url=URL or None)
 now = lambda: datetime.now(TZ).strftime("%Y-%m-%d %H:%M")
 
 def q(sql, *a):  # consulta segura entre hilos
@@ -87,7 +88,7 @@ def send_email(to: str, subject: str, body: str) -> str:
     """
     email(to, subject, body); return f"Email enviado a {to}."
 
-TOOLS = [remember, forget, add_reminder, cancel_reminder, send_email, {"type": "web_search_20260209", "name": "web_search"}]
+TOOLS = [remember, forget, add_reminder, cancel_reminder, send_email] + ([] if URL else [{"type": "web_search_20260209", "name": "web_search"}])
 
 def ask(msg):  # el cerebro: memoria + contexto + herramientas
     with LOCK:
