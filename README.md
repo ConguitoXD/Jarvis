@@ -8,6 +8,10 @@ Le hablas **por voz o por escrito** desde el navegador, o **desde el móvil por 
 - ✅ **Puede ser 100 % gratis**: si no quieres pagar, usa la IA gratuita en tu propio ordenador ([ver cómo](#-opción-100--gratis-sin-pagar-nada)).
 - ✅ **Completamente personalizable**: nombre, personalidad, idioma, zona horaria, voz, informe diario… todo en un solo archivo de texto.
 
+<p align="center"><img src="docs/hud-movil.png" width="260" alt="Jarvis en el móvil"> &nbsp; <img src="docs/hud-escritorio.png" width="560" alt="Jarvis en el ordenador"></p>
+
+La interfaz es un **HUD estilo Iron Man**: un reactor animado que cambia según el estado de Jarvis (en espera, procesando, escuchando o hablando), un reloj, paneles con tu memoria y tus avisos en vivo, y el chat. Está pensada primero para el móvil.
+
 ---
 
 ## 🧠 ¿Qué sabe hacer?
@@ -188,7 +192,7 @@ Y ejecuta `sudo systemctl enable --now jarvis`.
 | `email` | Servidor de correo (SMTP). Gmail: `smtp.gmail.com` / `465`. Outlook: `smtp.office365.com` / `587` | |
 | `telegram` | `token` del bot y lista de `allowed_chats` autorizados | |
 
-El **aspecto de la web** está en `index.html` (colores, textos). Para **añadirle nuevas habilidades**, copia una función con `@beta_tool` en `jarvis.py`, escribe qué hace en su descripción y añádela a la lista `TOOLS`: Jarvis aprenderá a usarla solo.
+El **aspecto del HUD** está en `index.html`: cambia los colores en las primeras líneas (`--c` es el color principal; pon `#ff3b3b` para un Jarvis rojo estilo Mark III). Para **añadirle nuevas habilidades**, copia una función con `@beta_tool` en `jarvis.py`, escribe qué hace en su descripción y añádela a la lista `TOOLS`: Jarvis aprenderá a usarla solo.
 
 ---
 

@@ -134,6 +134,11 @@ def telegram():  # habla con Jarvis desde el móvil
                 tg(chat, ask(text) if chat in ok else f"No autorizado. Tu chat id es {chat}: añádelo a 'allowed_chats' en config.json.")
         except Exception as e: print("Error Telegram:", e, flush=True); time.sleep(5)
 
+def status():  # datos en vivo para el HUD
+    return {"model": C.get("model", "claude-opus-5"), "free": bool(URL), "facts": q("SELECT COUNT(*) FROM facts")[0][0],
+            "reminders": q("SELECT due, text, repeat FROM reminders WHERE done=0 ORDER BY due"),
+            "chat": q("SELECT role, text FROM (SELECT * FROM chat ORDER BY id DESC LIMIT 20) ORDER BY id")}
+
 PAGE = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html"), "rb").read()
 
 class Web(BaseHTTPRequestHandler):  # interfaz web con voz
@@ -143,7 +148,9 @@ class Web(BaseHTTPRequestHandler):  # interfaz web con voz
     def send(self, body, ctype):
         self.send_response(200); self.send_header("Content-Type", ctype); self.end_headers(); self.wfile.write(body)
     def do_GET(self):
-        if self.auth(): self.send(PAGE.replace(b"{{NAME}}", C["name"].encode()), "text/html; charset=utf-8")
+        if not self.auth(): return
+        if self.path == "/status": return self.send(json.dumps(status()).encode(), "application/json")
+        self.send(PAGE.replace(b"{{NAME}}", C["name"].encode()), "text/html; charset=utf-8")
     def do_POST(self):
         if not self.auth(): return
         try: r = ask(json.loads(self.rfile.read(int(self.headers["Content-Length"])))["msg"])
